@@ -33,13 +33,8 @@ class Supervisor
             )
         );
         $p->setWorkingDirectory($this->applicationDirectory);
-        error_log('cmd: ' . $p->getCommandLine() . PHP_EOL, 3, '/tmp/supervisor.log');
-        $p->run(function ($status, $data) {
-            error_log(' -> ' . strtoupper($status) . ' :: ' . $data . PHP_EOL, 3, '/tmp/supervisor.log');
-        });
-        $p->wait(function ($status, $data) {
-            error_log(' -> ' . strtoupper($status) . ' :: ' . $data . PHP_EOL, 3, '/tmp/supervisor.log');
-        });
+        $p->run();
+        $p->wait();
         return $p;
     }
 
@@ -58,7 +53,6 @@ class Supervisor
     public function run()
     {
         $result = $this->execute('status')->getOutput();
-        error_log($result . PHP_EOL, 3, '/tmp/supervisor.log');
         if (strpos($result, 'sock no such file') || strpos($result, 'refused connection')) {
             $p = new Process(
                 sprintf(
@@ -68,13 +62,8 @@ class Supervisor
                 )
             );
             $p->setWorkingDirectory($this->applicationDirectory);
-            error_log('cmd: ' . $p->getCommandLine() . PHP_EOL, 3, '/tmp/supervisor.log');
-            $p->mustRun(function ($status, $data) {
-                error_log(' -> ' . strtoupper($status) . ' :: ' . $data . PHP_EOL, 3, '/tmp/supervisor.log');
-            });
-            $p->wait(function ($status, $data) {
-                error_log(' -> ' . strtoupper($status) . ' :: ' . $data . PHP_EOL, 3, '/tmp/supervisor.log');
-            });
+            $p->mustRun();
+            $p->wait();
         }
     }
 
