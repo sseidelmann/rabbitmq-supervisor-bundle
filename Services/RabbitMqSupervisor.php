@@ -152,6 +152,15 @@ class RabbitMqSupervisor
     }
 
     /**
+     * Returns the supervisord status
+     * @return string
+     */
+    public function status()
+    {
+        return $this->supervisor->status();
+    }
+
+    /**
      * Send -HUP to supervisord to gracefully restart all processes
      */
     public function hup()

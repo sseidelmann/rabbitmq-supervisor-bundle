@@ -33,6 +33,9 @@ class ControlCommand extends ContainerAwareCommand
             case 'restart':
                 $handler->restart();
                 break;
+            case 'status':
+                echo $handler->status();
+                break;
             case 'hup':
                 $handler->hup();
                 break;

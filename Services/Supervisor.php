@@ -65,4 +65,13 @@ class Supervisor
             $p->run();
         }
     }
+
+    /**
+     * Reads the status.
+     * @return string
+     */
+    public function status()
+    {
+        return $this->execute('status')->getOutput();
+    }
 }
