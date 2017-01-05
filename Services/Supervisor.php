@@ -62,7 +62,11 @@ class Supervisor
                 )
             );
             $p->setWorkingDirectory($this->applicationDirectory);
-            $p->run();
+            error_log('cmd: ' . $p->getCommandLine() . PHP_EOL, 3, '/tmp/supervisor.log');
+            $p->mustRun();
+            $p->wait(function ($status, $data) {
+                error_log(' -> ' . strtoupper($status) . ' :: ' . $data . PHP_EOL, 3, '/tmp/supervisor.log');
+            });
         }
     }
 
