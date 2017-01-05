@@ -21,5 +21,7 @@ class RebuildCommand extends ContainerAwareCommand
         /** @var \Phobetor\RabbitMqSupervisorBundle\Services\RabbitMqSupervisor $handler */
         $handler = $this->getContainer()->get('phobetor_rabbitmq_supervisor');
         $handler->rebuild();
+
+        return [];
     }
 }
