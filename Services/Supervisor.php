@@ -32,9 +32,12 @@ class Supervisor
                 $cmd
             )
         );
+        error_log('execute cmd: ' . $p->getCommandLine(), 3, '/tmp/supervisor.log');
         $p->setWorkingDirectory($this->applicationDirectory);
         $p->run();
-        $p->wait();
+        $p->wait(function ($type, $data) {
+            error_log(' -> ' . strtoupper($type) . ' :: ' . $data, 3, '/tmp/supervisor.log');
+        });
         return $p;
     }
 
