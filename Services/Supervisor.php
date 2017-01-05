@@ -32,12 +32,13 @@ class Supervisor
                 $cmd
             )
         );
-        error_log('execute cmd: ' . $p->getCommandLine(), 3, '/tmp/supervisor.log');
+        error_log('execute cmd: ' . $p->getCommandLine() . PHP_EOL, 3, '/tmp/supervisor.log');
         $p->setWorkingDirectory($this->applicationDirectory);
         $p->run();
         $p->wait(function ($type, $data) {
-            error_log(' -> ' . strtoupper($type) . ' :: ' . $data, 3, '/tmp/supervisor.log');
+            error_log(' -> ' . strtoupper($type) . ' :: ' . $data . PHP_EOL, 3, '/tmp/supervisor.log');
         });
+        error_log('command finsihed' . PHP_EOL, 3, '/tmp/supervisor.log');
         return $p;
     }
 
@@ -46,8 +47,10 @@ class Supervisor
      */
     public function reloadAndUpdate()
     {
+        error_log(__METHOD__ . ' start' . PHP_EOL, 3, '/tmp/supervisor.log');
         $this->execute('reread');
         $this->execute('update');
+        error_log(__METHOD__ . ' end' . PHP_EOL, 3, '/tmp/supervisor.log');
     }
 
     /**
