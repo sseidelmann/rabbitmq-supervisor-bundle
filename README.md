@@ -115,5 +115,6 @@ Control the supervisord daemon:
 app/console rabbitmq-supervisor:control stop
 app/console rabbitmq-supervisor:control start
 app/console rabbitmq-supervisor:control restart
+app/console rabbitmq-supervisor:control status
 app/console rabbitmq-supervisor:control hup
 ```
