@@ -88,6 +88,7 @@ rabbit_mq_supervisor:
         configuration_file:             /path/to/workspace/supervisord.conf
         pid_file:                       /path/to/workspace/supervisord.pid
         sock_file:                      /path/to/workspace/supervisord.sock
+        file_mode:                      0700
         log_file:                       /path/to/workspace/supervisord.log
         worker_configuration_directory: /path/to/workspace/worker/
         worker_output_log_file:         /path/to/workspace/logs/%kernel.environment%.log

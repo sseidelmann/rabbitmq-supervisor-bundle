@@ -45,6 +45,11 @@ class RabbitMqSupervisor
     private $workerCount;
 
     /**
+     * @var string
+     */
+    private $fileMode;
+
+    /**
      * @var array
      */
     private $workerOptions;
@@ -59,9 +64,10 @@ class RabbitMqSupervisor
      * @param array $consumers
      * @param array $multipleConsumers
      * @param int $workerCount
+     * @param string $fileMode
      * @param array $workerOptions
      */
-    public function __construct(Supervisor $supervisor, EngineInterface $templating, array $paths, array $commands, $consumers, $multipleConsumers, $workerCount, array $workerOptions = array())
+    public function __construct(Supervisor $supervisor, EngineInterface $templating, array $paths, array $commands, $consumers, $multipleConsumers, $workerCount, $fileMode, array $workerOptions = array())
     {
         $this->supervisor = $supervisor;
         $this->templating = $templating;
@@ -70,6 +76,7 @@ class RabbitMqSupervisor
         $this->consumers = $consumers;
         $this->multipleConsumers = $multipleConsumers;
         $this->workerCount = $workerCount;
+        $this->fileMode = $fileMode;
         $this->workerOptions = $workerOptions;
     }
 
@@ -253,19 +260,22 @@ class RabbitMqSupervisor
 
     public function generateSupervisorConfiguration()
     {
+        $supervisorConfigurationPath = $this->createSupervisorConfigurationFilePath();
         $content = $this->templating->render(
             'RabbitMqSupervisorBundle:Supervisor:supervisord.conf.twig',
             array(
                 'pidFile' => $this->paths['pid_file'],
                 'sockFile' => $this->paths['sock_file'],
                 'logFile' => $this->paths['log_file'],
+                'fileMode' => $this->fileMode,
                 'workerConfigurationDirectory' => $this->paths['worker_configuration_directory'],
             )
         );
         file_put_contents(
-            $this->createSupervisorConfigurationFilePath(),
+            $supervisorConfigurationPath,
             $content
         );
+        chmod($supervisorConfigurationPath, $this->fileMode);
     }
 
     private function generateWorkerConfigurations($names, $command, $maxMessages = 250)
@@ -287,6 +297,7 @@ class RabbitMqSupervisor
                     'workerOutputLog' => $this->paths['worker_output_log_file'],
                     'workerErrorLog' => $this->paths['worker_error_log_file'],
                     'numprocs' => $this->workerCount,
+                    'fileMode' => $this->fileMode,
                     'options' => $this->transformBoolsToStrings($this->workerOptions),
                 )
             );
@@ -299,11 +310,13 @@ class RabbitMqSupervisor
      */
     public function generateWorkerConfiguration($fileName, $vars)
     {
+        $workerConfigurationPath = sprintf('%s%s.conf', $this->paths['worker_configuration_directory'], $fileName);
         $content = $this->templating->render('RabbitMqSupervisorBundle:Supervisor:program.conf.twig', $vars);
         file_put_contents(
-            sprintf('%s%s.conf', $this->paths['worker_configuration_directory'], $fileName),
+            $workerConfigurationPath,
             $content
         );
+        chmod($workerConfigurationPath, $this->fileMode);
     }
 
     /**
