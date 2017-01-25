@@ -267,7 +267,7 @@ class RabbitMqSupervisor
                 'pidFile' => $this->paths['pid_file'],
                 'sockFile' => $this->paths['sock_file'],
                 'logFile' => $this->paths['log_file'],
-                'fileMode' => "".$this->fileMode,
+                'fileMode' => $this->fileMode,
                 'workerConfigurationDirectory' => $this->paths['worker_configuration_directory'],
             )
         );
@@ -275,7 +275,7 @@ class RabbitMqSupervisor
             $supervisorConfigurationPath,
             $content
         );
-        chmod($supervisorConfigurationPath, $this->fileMode);
+        chmod($supervisorConfigurationPath, (strlen($this->fileMode) == 4 ? base_convert($this->fileMode, 8, 10) : $this->fileMode));
     }
 
     private function generateWorkerConfigurations($names, $command, $maxMessages = 250)
@@ -297,7 +297,7 @@ class RabbitMqSupervisor
                     'workerOutputLog' => $this->paths['worker_output_log_file'],
                     'workerErrorLog' => $this->paths['worker_error_log_file'],
                     'numprocs' => $this->workerCount,
-                    'fileMode' => "".$this->fileMode,
+                    'fileMode' => $this->fileMode,
                     'options' => $this->transformBoolsToStrings($this->workerOptions),
                 )
             );
@@ -316,7 +316,7 @@ class RabbitMqSupervisor
             $workerConfigurationPath,
             $content
         );
-        chmod($workerConfigurationPath, $this->fileMode);
+        chmod($workerConfigurationPath, (strlen($this->fileMode) == 4 ? base_convert($this->fileMode, 8, 10) : $this->fileMode));
     }
 
     /**
